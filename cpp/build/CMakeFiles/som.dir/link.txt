@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../lib/libsom.a  CMakeFiles/som.dir/test/test.cc.o CMakeFiles/som.dir/src/base/circleTopo.cc.o CMakeFiles/som.dir/src/som.cc.o
+/usr/bin/ranlib ../lib/libsom.a

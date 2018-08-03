@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11 -O2 -fopenmp -pthread -fPIC    CMakeFiles/train.dir/src/train_som.cc.o  -o ../bin/train  -L/data01/home/fanzhongyue/install/caffe_dep/lib -rdynamic ../lib/libsom.a -lopencv_imgproc -lopencv_highgui -lopencv_core -Wl,-rpath,/data01/home/fanzhongyue/install/caffe_dep/lib 

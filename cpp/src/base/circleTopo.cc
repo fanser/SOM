@@ -5,22 +5,27 @@ CircleTopoWeight::CircleTopoWeight(const size_t &R0, const size_t &num_iters):
   R0_(R0),
   num_iters_(num_iters),
   T0_(float(num_iters) / std::log(R0_ + eps_))  {
+    std::cout << "R0: " << R0_ << std::endl;
+    std::cout << "T0: " << T0_ << std::endl;
   }
 
-cv::Mat1f CircleTopoWeight::GetWeight(const size_t &t) {
-  float radius = GetRadius(t);
-  cv::Mat1f topoWeight = GetWeight(radius);
-  return topoWeight
-}
-
 float CircleTopoWeight::GetRadius(const size_t &t) {
-  float radius = R0_ * std::exp(- t / T0_);    
+  float radius = R0_ * std::exp(- static_cast<float>(t) / T0_);    
+  //std::cout << "radius " << radius << std::endl;
   return radius;
 }
 
+cv::Mat CircleTopoWeight::GetWeight(const size_t &t) {
+  float radius = GetRadius(t);
+  //std::cout << "radius " << radius << std::endl;
+  cv::Mat1f topoWeight = GetWeight(radius);
+  return topoWeight;
+}
+
+
 cv::Mat1f CircleTopoWeight::GetWeight(const float &radius) {
-  int r = std::round(radius);
-  int H = W = 2*r + 1;
+  int r = int(radius);
+  int H = 2*r + 1, W = H;
   cv::Mat1f topoWeight = cv::Mat1f::zeros(H, W);
   float r_sq = radius * radius;
   for(int h=0; h < H; ++h) {
