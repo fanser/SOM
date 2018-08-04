@@ -7,8 +7,8 @@ Introduction
 The principal goal of an SOM is to transform an incoming signal pattern of arbitrary dimension into a one or two dimensional discrete map, 
 and to perform this transformation adaptively in a topologically ordered fashion.
 
-<div align=center>![Visualization of RGB color space by SOM algorithm](https://github.com/fanser/SOM/raw/master/cpp/bin/som_c.jpg)
-
+![Visualization of RGB color space by SOM algorithm](https://github.com/fanser/SOM/raw/master/cpp/bin/som_c.jpg)
+  
 Visualization of RGB color space by SOM algorithm
 
 <div align=left>
