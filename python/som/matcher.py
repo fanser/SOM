@@ -11,11 +11,6 @@ def cosine_matcher(X, W):
    #W /= np.sqrt(np.sum(W**2, axis =1, keepdims=True)) + 1e-20
    cosine = X.dot(W.T)
    indexs = np.argmax(cosine, axis=1)
-   '''
-   print cosine
-   print (X**2).sum()
-   print (W**2).sum()
-   '''
    return indexs
 
 
@@ -32,19 +27,18 @@ def l2_dist_matcher(X, W):
     idxs = np.argmin(dists, axis=1)
     return idxs
 
-def l2_dist_matcher2(X, W):
+def l2_dist_matcher2(X, W, topk=1):
     '''
     X and W has same dim
     X: n*c float array
     '''
     assert X.shape[-1] == W.shape[-1]
-    idxs = []
+    dists = []
     for i in range(W.shape[0]):
         w = W[i:i+1, :]
-        dists = w - X
-    W_reshape = W[np.newaxis, :, :]
-    dists = X_reshape - W_reshape
-    dists = np.sum(dists**2, axis=-1)
-    idxs = np.argmin(dists, axis=1)
-    return idxs
+        dist = np.sum((w - X) **2, axis=1, keepdims=1)
+        dists.append(dist.reshape(1, -1))
+    dists = np.vstack(dists)
+    idxs = np.argsort(dists, axis=0)[:topk, :]
+    return idxs.T
 

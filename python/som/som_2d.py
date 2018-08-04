@@ -1,6 +1,6 @@
 from sampler import sample_by_batch
 from initilization import w_init_from_data, TopoExpWeight, LRExpDecay, w_init_random
-from matcher import cosine_matcher, l2_dist_matcher
+from matcher import l2_dist_matcher
 
 import numpy as np
 
@@ -17,8 +17,8 @@ class SOM2D():
         '''
         Input:
             topo_w: m*n matrix the topographic weight 
-            X: n*c float array the feature vector (normalized)
-            W: h*w*c float mat, the parameters of SOM (normalized)
+            X: n*c float array the feature vector
+            W: h*w*c float mat, the parameters of SOM 
             winner: the winner index which is expand by row
         '''
         map_h, map_w = W.shape[0], W.shape[1]
@@ -27,8 +27,6 @@ class SOM2D():
 
         center_h = (topo_w.shape[0] -1 )/2
         center_w = (topo_w.shape[1] - 1)/2
-        #print center_h, center_w
-        #print idxs
         for x, idx in zip(X, winner):
             h, w = idx / map_w, idx % map_w
             up, down = h - center_h, h + center_h + 1
@@ -44,17 +42,10 @@ class SOM2D():
                 left, c_left = 0, center_w - w
             if right > map_w:
                 right, c_right = map_w, center_w  + map_w - w
-            #print "idx is ", idx
-            #print "topo bound ", c_up, c_down, c_left, c_right
-            #print "map bound ", up, down, left, right
             diff = x.reshape(1, 1, -1) - W[up:down, left:right, :]
-            #print "diff shape ", diff.shape, diff.reshape(-1)
-            #print x.reshape(1, 1, -1) - W
-            #diff = x.reshape(1, 1, -1) - W.reshape(map_h, map_w, -1)
             diff *= topo_w[c_up:c_down, c_left:c_right][:, :, np.newaxis]
             delta_w[up:down, left:right, :] += diff
             count_map[up:down, left:right, :] += 1
-            #print X.shape
         return delta_w /count_map
         #return delta_w
 
@@ -76,14 +67,6 @@ class SOM2D():
                 delta_w = self.calc_delta_W(topo_w, X_batch, W, winner)
                 delta_w *= lr
                 W += delta_w
-                '''
-                print "iter ", iter
-                print "lr ", lr
-                print "topo_w", topo_w
-                print "winner", winner
-                print "delta_w", delta_w
-                print "W", W
-                '''
             print 'Epoch {}/{}'.format(epoch, num_epoch)
 
 def Normalize(X):
@@ -100,7 +83,6 @@ def Normalize(X):
     X_normed = X_reshape / np.sqrt(np.sum(X_reshape**2, 1, keepdims=True)) + 1e-10
     return X_normed.reshape(X.shape)
 
-'''
 if __name__ == "__main__":
     import numpy as np
     num_dim = 400
@@ -116,44 +98,10 @@ if __name__ == "__main__":
     som2d = SOM2D(R0, num_iters, lr0)
     som2d.train(X, W, num_iters, batch_size)
     idxs = l2_dist_matcher(W.reshape(-1, 3), X)
-    print idxs.reshape(num_dim, num_dim)
+
     import cv2
     img = np.zeros((num_dim, num_dim, 3), dtype=np.uint8)
     rgb = X[idxs.reshape(-1), :][:, ::-1].reshape(num_dim, num_dim, 3) * 255
-    #rgb = X[idxs.reshape(-1), :].reshape(num_dim, num_dim, 3) * 255
     rgb = rgb.astype(np.uint8)
     img += rgb
-    print img.shape
     cv2.imwrite("./som.jpg", img)
-'''
-'''
-    from sklearn import datasets
-    num_dim = 10
-    R0 = num_dim / 2.0
-    num_iters = 2000
-    lr0 = 0.1
-    iris = datasets.load_iris()
-    X = iris.data
-    #W  = w_init_from_data(X, 3).reshape(1, 3, -1)
-    W  = w_init_random(num_dim, 4).reshape(1, num_dim, -1)
-    X = Normalize(X)
-    W = Normalize(W)
-    som2d = SOM2D(R0, num_iters, lr0)
-    print W.reshape(num_dim, 4)
-    som2d.train(X, W, num_iters, batch_size=10)
-    print W.reshape(num_dim, 4)
-    cosine = X.dot(W.reshape(num_dim, 4).T)
-    preds = np.argmax(cosine, axis=1)
-    labels = iris.target
-    print preds
-    print labels
-    from sklearn.cluster import KMeans
-    cluster = KMeans(n_clusters=3)
-    cluster.fit(X)
-    centers = cluster.cluster_centers_
-    cosine = X.dot(centers.T)
-    preds2 = np.argmax(cosine, axis=1)
-    print preds2
-    print centers
-'''
-

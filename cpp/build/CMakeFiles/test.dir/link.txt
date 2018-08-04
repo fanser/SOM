@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11 -O2 -fopenmp -pthread -fPIC    CMakeFiles/test.dir/test/test.cc.o CMakeFiles/test.dir/src/base/circleTopo.cc.o CMakeFiles/test.dir/src/som.cc.o  -o ../bin/test  -L/data01/home/fanzhongyue/install/caffe_dep/lib -rdynamic -lopencv_imgproc -lopencv_highgui -lopencv_core -Wl,-rpath,/data01/home/fanzhongyue/install/caffe_dep/lib 
